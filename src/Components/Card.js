@@ -3,6 +3,8 @@ import {Image} from "react-bootstrap";
 
 export class Card extends Component {
     render() {
-        return <Image src="images/01.jpg" rounded/>
+        return <Image src={this.props.filename} rounded
+                      style={{height: "100", width: "100%"}}
+        />
     }
 }
