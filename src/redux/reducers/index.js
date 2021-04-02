@@ -1,8 +1,10 @@
-import {combineReducers} from "redux";
+import {combineReducers} from "redux"
 import cardReducer from "./card"
+import {filenameReducer} from "./filenames"
 
 const reducer = combineReducers({
-    cardReducer
+    cardReducer,
+    filenameReducer
 })
 
 export default reducer
