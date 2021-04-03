@@ -1,10 +1,12 @@
 import {Image} from "react-bootstrap"
-import {useSelector, useDispatch} from "react-redux"
+import {initCard} from "../redux/actions/initCard"
+import {useDispatch} from "react-redux"
 
-export const Card = () => {
-    const cardReducer = useSelector(state => state.cardReducer)
+export const Card = ({filename}) => {
     const dispatch = useDispatch()
-    return <Image src={"images/01.jpg"} rounded
+    dispatch(initCard({filename}))
+
+    return <Image src={`images/${filename}.jpg`} rounded
                   style={{height: "100", width: "100%"}}
     />
 }
