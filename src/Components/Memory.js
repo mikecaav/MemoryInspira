@@ -12,7 +12,7 @@ export const Memory = () => {
                 filenames.map((filename) => {
                     return (
                         <Col xs={2} md={2} key={uuidv4()}>
-                            <Card filename={filename}/>
+                            <Card filename={filename} uuid={uuidv4()}/>
                         </Col>
                     )
                 })

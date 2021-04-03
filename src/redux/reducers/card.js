@@ -8,11 +8,14 @@ const cardReducer = (state=defaultState, action) => {
         case initCardType:
             state.push(action.payload)
             return state
+
         case toggleStateType:
-            return {
-                ...state,
-                payload: action.payload
-            }
+            state.map((card) => {
+                if (card.uuid === action.payload){
+                    card.isHidden = !card.isHidden
+                }
+            })
+            return state
         default:
             return state
     }
