@@ -22,7 +22,7 @@ const cardReducer = (state=defaultState, action) => {
             }else {
                 state[uuid].showFilename = state[uuid].filename
             }
-            return state
+            return {...state}
 
         default:
             return state

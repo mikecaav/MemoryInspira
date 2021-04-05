@@ -5,11 +5,12 @@ import {toggleState} from "../redux/actions/toggleState"
 
 export const Card = ({filename, uuid}) => {
     const dispatch = useDispatch()
-    dispatch(initCard({uuid, filename, isHidden:true}))
     const cardReducer = useSelector(state => state.cardReducer)
+    if (!cardReducer.hasOwnProperty(uuid)){
+        dispatch(initCard({uuid, filename, isHidden:true}))
+    }
 
     return (
-
         <Image src={`./images/${cardReducer[uuid].showFilename}.jpg`}
                rounded
                style={{
