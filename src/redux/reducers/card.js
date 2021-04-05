@@ -2,14 +2,16 @@ import {type as flipCard} from "../actions/flipCard"
 import {type as initCardType} from "../actions/initCard"
 import {type as findPairs} from "../actions/findPairs"
 
-const pairDefaultList = []
+const pairDefaultElement = {}
 const cardDefaultObjects = {}
-const defaultState = [cardDefaultObjects, pairDefaultList]
+const defaultState = [cardDefaultObjects, pairDefaultElement]
 const defaultHiddenCardFilename = "back"
-export const PAIR_LIST = 1
+export const PAIR_ELEMENT = 1
 export const CARD_LIST = 0
 
 const cardReducer = (state=defaultState, action) => {
+    let uuid = 0
+    let actualCard = null
     switch (action.type){
         case initCardType:
             const pairId = Math.ceil(parseInt(action.payload.filename)/2)
@@ -23,19 +25,34 @@ const cardReducer = (state=defaultState, action) => {
             return state
 
         case flipCard:
-            const uuid = action.payload
-            if (!state[CARD_LIST][uuid].pairFound){
-                state[CARD_LIST][uuid].isHidden = !state[CARD_LIST][uuid].isHidden
-                if (state[CARD_LIST][uuid].isHidden){
-                    state[CARD_LIST][uuid].showFilename = defaultHiddenCardFilename
+             uuid = action.payload
+            actualCard = state[CARD_LIST][uuid]
+            if (!actualCard.pairFound){
+                actualCard.isHidden = !actualCard.isHidden
+                if (actualCard.isHidden){
+                    actualCard.showFilename = defaultHiddenCardFilename
                 }else {
-                    state[CARD_LIST][uuid].showFilename = state[CARD_LIST][uuid].filename
+                    actualCard.showFilename = actualCard.filename
                 }
             }
             return {...state}
 
         case findPairs:
-            return state
+            actualCard = state[CARD_LIST][uuid]
+            const prevSelectedCard = state[PAIR_ELEMENT]
+            uuid = action.payload
+            if (Object.entries(prevSelectedCard).length === 0){
+                state[PAIR_ELEMENT] = actualCard
+            }else {
+                if (prevSelectedCard.pairId === actualCard.uuid){
+                    state[CARD_LIST][prevSelectedCard.uuid].pairFound = true
+                    state[CARD_LIST][actualCard.uuid].pairFound = true
+                }else{
+                    state[PAIR_ELEMENT] = {}
+                }
+            }
+            return {...state}
+
 
         default:
             return state

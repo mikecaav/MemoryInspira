@@ -2,7 +2,7 @@ import {Image} from "react-bootstrap"
 import {initCard} from "../redux/actions/initCard"
 import {useDispatch, useSelector} from "react-redux"
 import {flipCard} from "../redux/actions/flipCard"
-import {CARD_LIST, PAIR_LIST} from "../redux/reducers/card"
+import {CARD_LIST, PAIR_ELEMENT} from "../redux/reducers/card"
 
 export const Card = ({filename, uuid}) => {
     const dispatch = useDispatch()
