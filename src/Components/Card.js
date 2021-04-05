@@ -1,22 +1,23 @@
 import {Image} from "react-bootstrap"
 import {initCard} from "../redux/actions/initCard"
 import {useDispatch, useSelector} from "react-redux"
-import {toggleState} from "../redux/actions/toggleState"
+import {flipCard} from "../redux/actions/flipCard"
+import {CARD_LIST, PAIR_LIST} from "../redux/reducers/card"
 
 export const Card = ({filename, uuid}) => {
     const dispatch = useDispatch()
     const cardReducer = useSelector(state => state.cardReducer)
-    if (!cardReducer.hasOwnProperty(uuid)){
+    if (!cardReducer[CARD_LIST].hasOwnProperty(uuid)){
         dispatch(initCard({uuid, filename, isHidden:true}))
     }
 
     return (
-        <Image src={`./images/${cardReducer[uuid].showFilename}.jpg`}
+        <Image src={`./images/${cardReducer[CARD_LIST][uuid].showFilename}.jpg`}
                rounded
                style={{
                    height: "50", width: "100%",
                }}
-               onClick= { () => dispatch(toggleState(uuid)) }
+               onClick= { () => dispatch(flipCard(uuid)) }
         />
     )
 }

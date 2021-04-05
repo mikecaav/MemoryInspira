@@ -1,28 +1,41 @@
-import {type as toggleStateType} from "../actions/toggleState"
+import {type as flipCard} from "../actions/flipCard"
 import {type as initCardType} from "../actions/initCard"
+import {type as findPairs} from "../actions/findPairs"
 
-const defaultState = {}
+const pairDefaultList = []
+const cardDefaultObjects = {}
+const defaultState = [cardDefaultObjects, pairDefaultList]
 const defaultHiddenCardFilename = "back"
+export const PAIR_LIST = 1
+export const CARD_LIST = 0
 
 const cardReducer = (state=defaultState, action) => {
     switch (action.type){
         case initCardType:
+            const pairId = Math.ceil(parseInt(action.payload.filename)/2)
             action.payload = {
                 ...action.payload,
-                showFilename: defaultHiddenCardFilename
+                showFilename: defaultHiddenCardFilename,
+                pairId,
+                pairFound: false,
             }
-            state[action.payload.uuid] = action.payload
+            state[CARD_LIST][action.payload.uuid] = action.payload
             return state
 
-        case toggleStateType:
+        case flipCard:
             const uuid = action.payload
-            state[uuid].isHidden = !state[uuid].isHidden
-            if (state[uuid].isHidden){
-                state[uuid].showFilename = defaultHiddenCardFilename
-            }else {
-                state[uuid].showFilename = state[uuid].filename
+            if (!state[CARD_LIST][uuid].pairFound){
+                state[CARD_LIST][uuid].isHidden = !state[CARD_LIST][uuid].isHidden
+                if (state[CARD_LIST][uuid].isHidden){
+                    state[CARD_LIST][uuid].showFilename = defaultHiddenCardFilename
+                }else {
+                    state[CARD_LIST][uuid].showFilename = state[CARD_LIST][uuid].filename
+                }
             }
             return {...state}
+
+        case findPairs:
+            return state
 
         default:
             return state
