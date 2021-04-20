@@ -1,4 +1,4 @@
-import {type as getFilenamesType} from "../actions/getFilenames"
+import {type as getFilenamesType} from "../actions/Filename"
 
 const shuffle = (array) => {
     var currentIndex = array.length, temporaryValue, randomIndex

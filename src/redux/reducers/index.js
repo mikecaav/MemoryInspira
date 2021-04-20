@@ -1,5 +1,5 @@
 import {combineReducers} from "redux"
-import cardReducer from "./card"
+import cardReducer from "./Card"
 import {filenameReducer} from "./filenames"
 
 const reducer = combineReducers({
