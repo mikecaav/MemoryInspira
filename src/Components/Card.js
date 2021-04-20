@@ -25,3 +25,8 @@ export const Card = ({filename, uuid}) => {
         />
     )
 }
+
+function freeze(secs) {
+    var waituntil = performance.now() + secs*1000;
+    while(performance.now() < waituntil);
+}
