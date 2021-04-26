@@ -2,6 +2,7 @@ import {type as initCard} from "../actions/Card/initCard"
 import {type as flipUpCard} from "../actions/Card/flipUpCard"
 import {type as flipDownCard} from "../actions/Card/flipDownCard"
 import {type as matchPairs} from "../actions/Card/matchPairs";
+import {act} from "@testing-library/react";
 
 const openedCardDefault = []
 const cardObjectsDefault = {}
@@ -44,54 +45,41 @@ const cardReducer = (state = defaultState, action) => {
             return {...state}
 
         case matchPairs:
-            if (openedCardsLengthIsPair && !openedCardsIsEmpty){
-                const {actualCard, prevCard} = getLastOpenedPairs(state)
-                if (actualCard.pairId === prevCard.pairId){
-                    actualCard.pairFound = true
-                    prevCard.pairFound = true
-                }
-                state[cards] = {
-                    ...state[cards],
-                    actualCard,
-                    prevCard
-                }
-            }
-            return {...state}
-
-        case flipDownCard:
-            console.log("Downed")
-            if (openedCardsLengthIsPair && !openedCardsIsEmpty){
-                const {actualCard, prevCard} = getLastOpenedPairs(state)
-                if (!actualCard.pairFound){
-                    actualCard.isHidden = true
-                    prevCard.isHidden = true
-                    actualCard.showFilename = defaultHiddenCardFilename
-                    prevCard.showFilename = defaultHiddenCardFilename
+            state[openedCards].map((actualCard, actualCardIndex)=>{
+                const cardIndexIsOdd = !openedCardsIsEmpty && actualCardIndex % 2 !== 0
+                if (cardIndexIsOdd){
+                    const prevCard = state[openedCards][actualCardIndex - 1]
+                    if (actualCard.pairId === prevCard.pairId){
+                        actualCard.pairFound = true
+                        prevCard.pairFound = true
+                    }
                     state[cards] = {
                         ...state[cards],
                         actualCard,
                         prevCard
                     }
-                    state[openedCards].pop()
-                    state[openedCards].pop()
                 }
+            })
+            return {...state}
 
-            }
+
+        case flipDownCard:
+            state[openedCards].map((actualCard)=>{
+                if (!actualCard.pairFound){
+                    actualCard.isHidden = true
+                    actualCard.showFilename = defaultHiddenCardFilename
+                    state[cards] = {
+                        ...state[cards],
+                        actualCard,
+                    }
+                }
+            })
+            state[openedCards] = []
             return {...state}
 
         default:
             return {...state}
     }
-}
-
-const getLastOpenedPairs = (state) =>{
-    const lastElementIndex = state[openedCards].length - 1
-    const penultimateElementIndex = lastElementIndex - 1
-    const actualCard = state[openedCards][lastElementIndex]
-    const prevCard = state[openedCards][penultimateElementIndex]
-    return (
-        {actualCard, prevCard}
-    )
 }
 
 export default cardReducer
