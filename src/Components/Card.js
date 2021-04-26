@@ -1,11 +1,10 @@
 import {Image} from "react-bootstrap"
 import {useDispatch, useSelector} from "react-redux"
-import {cards} from "../redux/reducers/Card"
+import cardReducer, {cards} from "../redux/reducers/Card"
 import {initCard} from "../redux/actions/Card/initCard"
 import {flipUpCard} from "../redux/actions/Card/flipUpCard"
 import {matchPairs} from "../redux/actions/Card/matchPairs"
 import {flipDownCard} from "../redux/actions/Card/flipDownCard"
-
 
 export const Card = ({filename, uuid}) => {
     const dispatch = useDispatch()
@@ -21,12 +20,16 @@ export const Card = ({filename, uuid}) => {
                    height: "50", width: "100%",
                }}
                onClick= { () => {
-                   dispatch(flipUpCard(uuid))
-                   dispatch(matchPairs())
-                   setTimeout(()=>{
-                           dispatch(flipDownCard())
-                       }, 5000
-                   )
+                   if (!cardReducer.lockedBoard){
+                       dispatch(flipUpCard({uuid}))
+                       dispatch(matchPairs())
+                       if (cardReducer.openedCards.length === 2){
+                           setTimeout(()=>{
+                                   dispatch(flipDownCard())
+                               }, 5000
+                           )
+                       }
+                   }
                } }
         />
     )

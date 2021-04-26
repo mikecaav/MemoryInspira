@@ -2,11 +2,10 @@ import {type as initCard} from "../actions/Card/initCard"
 import {type as flipUpCard} from "../actions/Card/flipUpCard"
 import {type as flipDownCard} from "../actions/Card/flipDownCard"
 import {type as matchPairs} from "../actions/Card/matchPairs";
-import {act} from "@testing-library/react";
 
 const openedCardDefault = []
 const cardObjectsDefault = {}
-const defaultState = {"cards": cardObjectsDefault, "openedCards": openedCardDefault}
+const defaultState = {"cards": cardObjectsDefault, "openedCards": openedCardDefault, "lockedBoard": false}
 export const openedCards = "openedCards"
 export const cards = "cards"
 const defaultHiddenCardFilename = "back"
@@ -14,7 +13,6 @@ const defaultHiddenCardFilename = "back"
 const cardReducer = (state = defaultState, action) => {
     let uuid
     let actualCard
-    const openedCardsLengthIsPair = state[openedCards].length % 2 === 0
     const openedCardsIsEmpty = state[openedCards].length === 0
 
     switch (action.type) {
@@ -31,9 +29,9 @@ const cardReducer = (state = defaultState, action) => {
             return {...state}
 
         case flipUpCard:
-            uuid = action.payload
+            uuid = action.payload.uuid
             actualCard = state[cards][uuid]
-            if ( actualCard.isHidden ){
+            if (actualCard.isHidden) {
                 actualCard.isHidden = false
                 actualCard.showFilename = actualCard.filename
                 state[openedCards].push(actualCard)
@@ -45,13 +43,15 @@ const cardReducer = (state = defaultState, action) => {
             return {...state}
 
         case matchPairs:
-            state[openedCards].map((actualCard, actualCardIndex)=>{
+            state[openedCards].map((actualCard, actualCardIndex) => {
                 const cardIndexIsOdd = !openedCardsIsEmpty && actualCardIndex % 2 !== 0
-                if (cardIndexIsOdd){
+                if (cardIndexIsOdd) {
                     const prevCard = state[openedCards][actualCardIndex - 1]
-                    if (actualCard.pairId === prevCard.pairId){
+                    state.lockedBoard = true
+                    if (actualCard.pairId === prevCard.pairId) {
                         actualCard.pairFound = true
                         prevCard.pairFound = true
+                        state[openedCards] = []
                     }
                     state[cards] = {
                         ...state[cards],
@@ -64,8 +64,8 @@ const cardReducer = (state = defaultState, action) => {
 
 
         case flipDownCard:
-            state[openedCards].map((actualCard)=>{
-                if (!actualCard.pairFound){
+            state[openedCards].map((actualCard) => {
+                if (!actualCard.pairFound) {
                     actualCard.isHidden = true
                     actualCard.showFilename = defaultHiddenCardFilename
                     state[cards] = {
@@ -74,6 +74,7 @@ const cardReducer = (state = defaultState, action) => {
                     }
                 }
             })
+            state.lockedBoard = false
             state[openedCards] = []
             return {...state}
 
